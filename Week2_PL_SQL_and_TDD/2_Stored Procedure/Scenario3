@@ -1,0 +1,27 @@
+CREATE OR REPLACE PROCEDURE TransferFunds (
+    p_SourceAccountID IN ACCOUNTS.AccountID%TYPE,
+    p_TargetAccountID IN ACCOUNTS.AccountID%TYPE,
+    p_Amount IN NUMBER
+) AS
+    v_SourceBalance ACCOUNTS.Balance%TYPE;
+BEGIN
+    SELECT Balance INTO v_SourceBalance
+    FROM ACCOUNTS
+    WHERE AccountID = p_SourceAccountID
+    FOR UPDATE;
+
+    IF v_SourceBalance < p_Amount THEN
+        RAISE_APPLICATION_ERROR(-20001, 'Insufficient funds');
+    END IF;
+
+    UPDATE ACCOUNTS
+    SET Balance = Balance - p_Amount
+    WHERE AccountID = p_SourceAccountID;
+
+    UPDATE ACCOUNTS
+    SET Balance = Balance + p_Amount
+    WHERE AccountID = p_TargetAccountID;
+
+    COMMIT;
+END;
+/

@@ -1,0 +1,13 @@
+DECLARE
+    CURSOR c_customers IS
+        SELECT CustomerID FROM CUSTOMERS WHERE Age > 60;
+
+BEGIN
+    FOR customer_rec IN c_customers LOOP
+        UPDATE LOANS
+        SET InterestRate = InterestRate - 1
+        WHERE CustomerID = customer_rec.CustomerID;
+    END LOOP;
+    COMMIT;
+END;
+/

@@ -1,0 +1,9 @@
+CREATE OR REPLACE PROCEDURE ProcessMonthlyInterest AS
+BEGIN
+    UPDATE ACCOUNTS
+    SET Balance = Balance * 1.01
+    WHERE UPPER(AccountType) = 'SAVINGS';
+
+    COMMIT;
+END;
+/
